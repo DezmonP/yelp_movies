@@ -38,10 +38,13 @@ router.post("/", isLoggedIn, async (req,res) => {
 	try{
 		const movie = await Movie.create(newMovie)
 		//console.log(movie);
+		req.flash("success", "Movie Created")
 		res.redirect("/movies/" + movie._id);
 	}catch(err){
-		console.log(err);
-		res.send("You broke it ../ movies POST")
+		req.flash("error", "Error creating movie")
+		res.redirect("/movies")
+		// res.send("You broke it ../ movies POST")
+		
 	}
 })
 //New
@@ -112,10 +115,12 @@ router.put("/:id", checkMovieOwner,async (req,res) => {
 	}
 	try{
 		const movie = await Movie.findByIdAndUpdate(req.params.id,movieBody,{new:true}).exec()
+		req.flash("success", "Movie updated!")
 		res.redirect(`/movies/${req.params.id}`)
 	}catch(err){
 		console.log(err)
-		res.send("you broke the ../movies/id PUT")
+		req.flash("error", "Error updating movie.");
+		res.redirect("/movies");
 	}
 })
 
@@ -123,11 +128,12 @@ router.put("/:id", checkMovieOwner,async (req,res) => {
 router.delete("/:id", checkMovieOwner, async (req,res) => {
 	try{
 		const deletedMovie = await Movie.findByIdAndDelete(req.params.id).exec();
-		console.log("Deleted:", deletedMovie);
+		req.flash("success", "Movie deleted!")
 		res.redirect("/movies")
 	}catch(err){
 		console.log(err);
-		res.send("Broken... /movies/id DELETE");
+		req.flash("error", "Error deleting movie.")
+		res.redirect("back");
 	}
 })
 

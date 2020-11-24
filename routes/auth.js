@@ -16,7 +16,8 @@ router.post('/signup', async (req,res) => {
 			email: req.body.email
 		}), req.body.password);
 		
-		console.log(newUser);
+		req.flash("success", `Signed you up as ${newUser.username}`);
+		
 		passport.authenticate('local')(req,res, () => {
 			res.redirect('/movies'); 
 		})
@@ -36,7 +37,9 @@ router.get('/login', (req,res) => {
 // Login 
 router.post('/login', passport.authenticate('local', {
 	successRedirect: '/movies',
-	failureRedirect: '/login'
+	failureRedirect: '/login',
+	failureFlash: true,
+	successFlash: "Logged in successfully"
 }))
 router.post('/login', (req,res) => {
 	res.send("Login POST");
@@ -45,7 +48,9 @@ router.post('/login', (req,res) => {
 //Logout
 router.get('/logout', (req,res) => {
 	req.logout();
+	req.flash("success", "Logged you out");
 	res.redirect('/movies');
+	
 })
 
 module.exports = router;
