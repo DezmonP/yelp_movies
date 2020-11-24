@@ -63,6 +63,22 @@ router.get("/search", async (req,res) => {
 	}
 })
 
+//Genre 
+router.get("/genre/:genre", async(req,res) => {
+	// Check if the given genre is valid 
+	const validGenres = ["action", "horror", "comedy", "drama", "romance", "animation", "crime","documentary", "sports"];
+	if(validGenres.includes(req.params.genre.toLowerCase())){
+		// If yes, continue 
+		const movies = await Movie.find({genre: req.params.genre}).exec();
+		res.render("movies", {movies});
+	}else{
+		// If no, send an error
+		res.send("Please enter a valid genre");
+	}
+	
+	
+})
+
 //Show
 router.get("/:id", async (req,res) => {	
 	try{

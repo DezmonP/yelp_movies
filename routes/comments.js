@@ -56,7 +56,7 @@ router.put("/:commentId", checkCommentOwner,async(req,res) => {
 //Delete Comment - Delete the Comment 
 router.delete("/:commentId", checkCommentOwner, async(req,res) => {
 	try{
-		const comment = await Comment.findByIdAndDelete(req.params.commentId);
+		const comment = await Comment.findByIdAndDelete(req.params.commentId).exec();
 		console.log(comment);
 		res.redirect(`/movies/${req.params.id}`);
 	}catch(err){
