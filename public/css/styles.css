@@ -28,3 +28,21 @@
 .show_image-container img{
 	width: 80%;
 }
+
+#landingTitle{
+	background-color:black;
+	color: white;
+	text-align:center;
+	margin: auto;
+	width: 50%;
+	height: 5rem;
+	font-size:3rem;
+	font-family: 'Abril Fatface', sans-serif;
+}
+
+#body{
+	background-color: black;
+	background-image: url('https://www.wallpaperup.com/uploads/wallpapers/2013/12/26/205901/e0389e2031c3b353637bb0c3c5739117.jpg');
+	background-size: cover;
+	
+}
