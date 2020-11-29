@@ -84,6 +84,13 @@ router.get("/genre/:genre", async(req,res) => {
 	
 })
 
+//vote 
+router.post("/vote", isLoggedIn, (req,res) => {
+	res.json({
+		message:"voted:"
+	});
+})
+
 //Show
 router.get("/:id", async (req,res) => {	
 	try{
