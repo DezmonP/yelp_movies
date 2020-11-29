@@ -15,7 +15,10 @@ const movieSchema = new mongoose.Schema({
 			ref: "User"
 		},
 		username: String
-	}
+	},
+	upvotes: [String],
+	downvotes: [String]
+	
 })
 
 movieSchema.index({
