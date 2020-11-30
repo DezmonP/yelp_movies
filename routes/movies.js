@@ -85,11 +85,13 @@ router.get("/genre/:genre", async(req,res) => {
 })
 
 //vote 
-router.post("/vote", isLoggedIn, (req,res) => {
-	console.log(req.body);
-	res.json({
-		message:"voted:"
-	});
+router.post("/vote", isLoggedIn, async (req,res) => {
+	console.log("Request body: ",req.body);
+	
+	const movie = await Movie.findById(req.body.movieId)
+	console.log(movie)
+	
+	res.json(movie);
 })
 
 //Show
