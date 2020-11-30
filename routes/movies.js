@@ -87,11 +87,61 @@ router.get("/genre/:genre", async(req,res) => {
 //vote 
 router.post("/vote", isLoggedIn, async (req,res) => {
 	console.log("Request body: ",req.body);
+	console.log(req.user.username); 
 	
 	const movie = await Movie.findById(req.body.movieId)
-	console.log(movie)
+	const alreadyUpVoted = movie.upvotes.indexOf(req.user.username) // will be -1 if not found 
+	const alreadyDownVoted = movie.downvotes.indexOf(req.user.username) //Will be -1 if not found
 	
-	res.json(movie);
+	let response = {}
+	//Voting logic 
+	if(alreadyUpVoted === -1 && alreadyDownVoted === -1){ // Has not voted 
+		if(req.body.voteType === "up"){ //Upvoting 
+			movie.upvotes.push(req.user.uername);
+			movie.save()
+			response.message ="Upvote tallied"	
+		}else if(req.body.voteType ==="down"){ //Downvoting
+			movie.downvotes.push(req.user.uername);
+			movie.save()
+			response.message ="Downvote tallied"
+		}else { //Error
+			response.message = "Error 1"
+		}
+	}else if (alreadyUpVoted>=0) { // Already upvoted
+		if(req.body.voteType === "up"){
+			movie.upvotes.splice(alreadyUpVoted,1);
+			movie.save()
+			respnse.messsge ="Upvote removed"
+		}else if (req.body.voteType ==="down"){
+			movie.upvotes.splice(alreadyUpVoted,1);
+			movie.downvotes.push(req.user.username);
+			movie.save()
+			response.message ="Changed to downvote"
+		}else { //Error
+			response.messsage = "Error 2"
+		}
+		movie.save()
+	}else if (alreadyDownVoted>=0) {// Already downvoted
+		
+		if(req.body.voteType === "up"){
+			movie.downvotes.splice(alreadyDownVoted,1);
+			movie.upvotes.push(req.user.username);
+			movie.save()
+			response.message = "Changed to upvote"
+		}else if (req.body.voteType ==="down"){
+			movie.downvotes.splice(alreadyDownVoted,1);
+			movie.save()
+			response.message = "Downvote removed"
+		}else { //Error
+			response.message = "Error 3"
+		}
+		
+	}else { // Error
+		
+		response.message = "Error 4"
+	}
+	
+	res.json(response);
 })
 
 //Show
