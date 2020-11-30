@@ -99,26 +99,26 @@ router.post("/vote", isLoggedIn, async (req,res) => {
 		if(req.body.voteType === "up"){ //Upvoting 
 			movie.upvotes.push(req.user.uername);
 			movie.save()
-			response.message ="Upvote tallied"	
+			response = {message:"Upvote tallied", code: 1}
 		}else if(req.body.voteType ==="down"){ //Downvoting
 			movie.downvotes.push(req.user.uername);
 			movie.save()
-			response.message ="Downvote tallied"
+			response = {message:"Downvote tallied", code: -1}
 		}else { //Error
-			response.message = "Error 1"
+			response = {message:"Error 1", code:"err"}
 		}
 	}else if (alreadyUpVoted>=0) { // Already upvoted
 		if(req.body.voteType === "up"){
 			movie.upvotes.splice(alreadyUpVoted,1);
 			movie.save()
-			respnse.messsge ="Upvote removed"
+			response = {message:"Upvote removed", code: 0}
 		}else if (req.body.voteType ==="down"){
 			movie.upvotes.splice(alreadyUpVoted,1);
 			movie.downvotes.push(req.user.username);
 			movie.save()
-			response.message ="Changed to downvote"
+			response = {message:"Changed to downvote", code: -1}
 		}else { //Error
-			response.messsage = "Error 2"
+			response = {message:"Error 2", code:"err"}
 		}
 		movie.save()
 	}else if (alreadyDownVoted>=0) {// Already downvoted
@@ -127,19 +127,23 @@ router.post("/vote", isLoggedIn, async (req,res) => {
 			movie.downvotes.splice(alreadyDownVoted,1);
 			movie.upvotes.push(req.user.username);
 			movie.save()
-			response.message = "Changed to upvote"
+			response = {message:"Changed to upvote", code: 1}
 		}else if (req.body.voteType ==="down"){
 			movie.downvotes.splice(alreadyDownVoted,1);
 			movie.save()
-			response.message = "Downvote removed"
+			response = {message:"Downvote removed", code: 0}
 		}else { //Error
-			response.message = "Error 3"
+			response = {message:"Error 3", code:"err"}
 		}
 		
 	}else { // Error
 		
-		response.message = "Error 4"
+		response = {message:"Error 4", code:"err"}
 	}
+	
+	//Update score
+	response.score = movie.upvotes.length - movie.downvotes.length;
+	
 	
 	res.json(response);
 })
