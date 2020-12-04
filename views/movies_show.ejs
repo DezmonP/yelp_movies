@@ -19,6 +19,10 @@
 				  <td><%= movie.productionCompany%></td>
 				</tr>
 				<tr>
+				  <th scope="row">Actors</th>
+				  <td><%= movie.actors%></td>
+				</tr>
+				<tr>
 				  <th scope="row">Release Date</th>
 				  <td><%= movie.date %></td>
 				</tr>
@@ -38,7 +42,10 @@
 				</a>
 				<form action ="/movies/<%= movie._id %>?_method=DELETE" method ="POST">
 					<button type ="submit" class ="btn btn-outline-danger btn-lg btn-block">Delete</button>
-			</form>
+				</form>
+				<!-- Button for adding movie to want to watch list -->
+				<button id ="wantToWatch_btn"class = "btn btn-outline-secondary btn-lg btn-block">Add to Want to Watch</button>
+			
 			<% } %>
 		</div>
 	</div>
@@ -55,7 +62,7 @@
 			<% } %>
 			<span id="score" class="mx-2"><%= movie.upvotes.length - movie.downvotes.length%></span>
 			<% if (user && movie.downvotes.indexOf(user.username)>=0) { %>
-				<button id ="upvote_btn"class = "btn btn-success btn-lg mt-3">+</button>
+				<button id ="downvote_btn"class = "btn btn-danger btn-lg mt-3">+</button>
 			<% } else if (user) {  %>
 				<button id ="downvote_btn"class = "btn btn-outline-danger btn-lg mt-3">-</button>
 			<% } %>
@@ -92,6 +99,7 @@
 	var movieId = "<%- movie._id %>"	
 </script>
 <script src="/js/movies_show.js"></script>
+<script src="/js/movies_want.js"></script>
 
 
 

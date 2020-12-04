@@ -5,6 +5,7 @@ const movieSchema = new mongoose.Schema({
 	description: String,
 	producer: String,
 	productionCompany: String,
+	actors: String,
 	date: Date,
 	genre: String,
 	color: Boolean, 

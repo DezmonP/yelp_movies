@@ -16,7 +16,7 @@ const sendVote = async (voteType) => {
       		'Content-Type': 'application/json'
     	}
 	}
-	if(voteType ==="up"){
+	if(voteType === "up"){
 		options.body = JSON.stringify({
 			voteType: "up",
 			movieId

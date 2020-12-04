@@ -2,6 +2,7 @@ const express = require('express');
 const router= express.Router();
 const Movie = require('../models/movies');
 const Comment = require('../models/comment');
+const User = require('../models/user');
 const isLoggedIn = require('../utils/isLoggedIn');
 const checkMovieOwner = require('../utils/checkMovieOwner');
 
@@ -17,6 +18,41 @@ router.get("/", async (req,res) => {
 	}
 	
 })
+// Want to watch
+router.get("/want", isLoggedIn, async(req,res) => {
+	const user = await User.findById(req.user._id);
+	const movie_ids = await user.wantToWatch ;// List of IDs here, just get from the DB.
+	const movies = Movie.find({
+    		"_id": {
+				$in: movie_ids
+			}
+	}).exec();
+	try{
+		res.render("movies", {movies})
+	}catch(err){
+		console.log(err);
+		res.send("Error with want to watch sentence ")
+	}
+	
+})
+
+//Want to watch post
+router.post("/want", isLoggedIn, async(req,res) => {
+	
+	try{
+		const movie = await Movie.findById(req.body.movieId)
+		const user = await User.findById(req.user._id)
+		user.wantToWatch.push(movie);
+		user.wantToWatch.save();
+		req.flash("success", "Movie Added");
+		res.json({message: "added"});
+	}catch(err){
+		req.flash("error", "Error adding movie")
+		res.redirect("/movies")
+	}
+	
+})
+
 //Create
 router.post("/", isLoggedIn, async (req,res) => {
 	const genre = req.body.genre.toLowerCase();
@@ -26,6 +62,7 @@ router.post("/", isLoggedIn, async (req,res) => {
 		description: req.body.description,
 		producer: req.body.producer,
 		productionCompany: req.body.productionCompany,
+		actors: req.body.actors,
 		date: req.body.date,
 		genre: genre,
 		color: !req.body.color,
@@ -53,6 +90,7 @@ router.post("/", isLoggedIn, async (req,res) => {
 router.get("/new", isLoggedIn, async (req,res) => {
 	res.render("movies_new");
 })
+
 //Search
 router.get("/search", async (req,res) => {
 	try{
@@ -97,11 +135,11 @@ router.post("/vote", isLoggedIn, async (req,res) => {
 	//Voting logic 
 	if(alreadyUpVoted === -1 && alreadyDownVoted === -1){ // Has not voted 
 		if(req.body.voteType === "up"){ //Upvoting 
-			movie.upvotes.push(req.user.uername);
+			movie.upvotes.push(req.user.username);
 			movie.save()
 			response = {message:"Upvote tallied", code: 1}
 		}else if(req.body.voteType ==="down"){ //Downvoting
-			movie.downvotes.push(req.user.uername);
+			movie.downvotes.push(req.user.username);
 			movie.save()
 			response = {message:"Downvote tallied", code: -1}
 		}else { //Error
@@ -120,7 +158,6 @@ router.post("/vote", isLoggedIn, async (req,res) => {
 		}else { //Error
 			response = {message:"Error 2", code:"err"}
 		}
-		movie.save()
 	}else if (alreadyDownVoted>=0) {// Already downvoted
 		
 		if(req.body.voteType === "up"){
@@ -173,6 +210,7 @@ router.put("/:id", checkMovieOwner,async (req,res) => {
 		description: req.body.description,
 		producer: req.body.producer,
 		productionCompany: req.body.productionCompany,
+		actors: req.body.actors,
 		date: req.body.date,
 		genre: genre,
 		color: !req.body.color,
