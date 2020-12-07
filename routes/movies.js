@@ -21,7 +21,7 @@ router.get("/", async (req,res) => {
 // Want to watch
 router.get("/want", isLoggedIn, async(req,res) => {
 	const user = await User.findById(req.user._id);
-	const movie_ids = await user.wantToWatch ;// List of IDs here, just get from the DB.
+	const movie_ids = await [res.user.wantToWatch] ;// List of IDs here, just get from the DB.
 	const movies = Movie.find({
     		"_id": {
 				$in: movie_ids
@@ -44,13 +44,12 @@ router.post("/want", isLoggedIn, async(req,res) => {
 		const user = await User.findById(req.user._id)
 		user.wantToWatch.push(movie);
 		user.wantToWatch.save();
-		req.flash("success", "Movie Added");
 		res.json({message: "added"});
+		req.flash("success", "Movie Added");
 	}catch(err){
 		req.flash("error", "Error adding movie")
 		res.redirect("/movies")
 	}
-	
 })
 
 //Create
@@ -116,7 +115,7 @@ router.get("/genre/:genre", async(req,res) => {
 		res.render("movies", {movies});
 	}else{
 		// If no, send an error
-		res.send("Please enter a valid genre");
+		res.send("Please choose a valid genre");
 	}
 	
 	
@@ -124,8 +123,6 @@ router.get("/genre/:genre", async(req,res) => {
 
 //vote 
 router.post("/vote", isLoggedIn, async (req,res) => {
-	console.log("Request body: ",req.body);
-	console.log(req.user.username); 
 	
 	const movie = await Movie.findById(req.body.movieId)
 	const alreadyUpVoted = movie.upvotes.indexOf(req.user.username) // will be -1 if not found 

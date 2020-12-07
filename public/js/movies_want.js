@@ -1,4 +1,4 @@
-
+//This code is for my want to watch movies button
 //==========================
 //SELECT ELEMENTS
 //==========================
@@ -9,7 +9,7 @@ const wantBtn = document.getElementById("wantToWatch_btn");
 //==========================
 
 const sendMovie = async () => {
-	
+	console.log("send movie function")
 	const options ={
 		method: "POST",
 		header: {
@@ -18,9 +18,12 @@ const sendMovie = async () => {
 	}
 	options.body = JSON.stringify({
 			movieId
+			
 		})
+	console.log(movieId)
 	await fetch("/movies/want", options)
 	.then(data => {
+		console.log(data);
 		return data.json();
 	})
 	.catch(err => {
@@ -29,5 +32,6 @@ const sendMovie = async () => {
 }
 
 wantBtn.addEventListener("click", async function(){
+	console.log("Step 3")
 	sendMovie();
 })
